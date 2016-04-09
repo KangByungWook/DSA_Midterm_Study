@@ -6,13 +6,17 @@
 #include <string.h>
 #include "stack.h"
 
+typedef enum {false, true} bool;
+
 //postFix : prefix에서 변환된 postfix 문자열이 저장되는 주소 
 char postFix[100];
 int postFixBuffIndex = 0;
+bool bracket_close = false;
     
 
 int get_precedence(char *oper){
-	if(!strcmp(oper, "AND") || !strcmp(oper, "OR"))return 1;
+	if(*oper == ')') return 0;
+	else if(!strcmp(oper, "AND") || !strcmp(oper, "OR"))return 1;
 	else if(*oper == '+' || *oper == '-') return 2;
 	else if(*oper == '*' || *oper == '/') return 3;
 	else if(*oper == '(' || *oper == ')') return 4;
@@ -59,6 +63,7 @@ char* prefix_to_postfix(char *str){
 			strncpy(tmp, str+start_index,num_of_char);
 			
         	tmp[num_of_char] = '\0';
+        	// tmp가 ( 또는 ) 인 경우 처리 
         	while(!isEmpty(stack) && stack[top].precedence >= get_precedence(tmp)){
         		
         		printf("%s", stack[top].oper);
@@ -69,7 +74,10 @@ char* prefix_to_postfix(char *str){
         		Pop(&top);
 			}
 			strcpy(newElement.oper,tmp);
-			newElement.precedence = get_precedence(tmp);
+			
+			//"("인 경우 들어갈때는 스택에 들어갈때는 우선순위가 가장 높지만 들어가고 나서는 우선순위가 가장 낮아짐 
+			if(!strcmp(tmp,"(")) newElement.precedence = 0;
+			else newElement.precedence = get_precedence(tmp);
 			Push(&top, newElement);
         	}
 	}
@@ -84,5 +92,8 @@ char* prefix_to_postfix(char *str){
 	return postFix;	
 }
 
+int calculate_postfix(char *postfix){
+	
+}
 
 #endif
