@@ -12,9 +12,9 @@
 int main(){
 	char str[100];
 	scanf("%s", str);
-	evaluate(str);
+	prefix_to_postfix(str);
 //	char tmp = '+';
 //	printf("%d",get_precedence(&tmp));
-	
+	printf("\n%s", postFix);
     return 0;
 }
