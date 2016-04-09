@@ -12,7 +12,8 @@
 #include <stdio.h>
 #define MAX 100
 typedef struct element{
-    char oper[20];
+	float fnum;
+	char oper[20];
     int precedence;
 }element;
 element stack[MAX];

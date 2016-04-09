@@ -6,12 +6,12 @@
 #include <string.h>
 #include "stack.h"
 
-typedef enum {false, true} bool;
+
 
 //postFix : prefix에서 변환된 postfix 문자열이 저장되는 주소 
 char postFix[100];
 int postFixBuffIndex = 0;
-bool bracket_close = false;
+
     
 
 int get_precedence(char *oper){
@@ -66,10 +66,13 @@ char* prefix_to_postfix(char *str){
         	// tmp가 ( 또는 ) 인 경우 처리 
         	while(!isEmpty(stack) && stack[top].precedence >= get_precedence(tmp)){
         		
-        		printf("%s", stack[top].oper);
+        		// "(" 또는 ")"인 경우 postFix에 반영하지 않는다. 
+        		if(strcmp(stack[top].oper, ")") && strcmp(stack[top].oper, "(")){
+        			printf("%s", stack[top].oper);	
+					strcat(postFix, stack[top].oper);
+					strcat(postFix, " ");	
+				}
         		
-        		strcat(postFix, stack[top].oper);
-				strcat(postFix, " ");
 				
         		Pop(&top);
 			}
@@ -82,18 +85,80 @@ char* prefix_to_postfix(char *str){
         	}
 	}
     while(!isEmpty(stack)){
-    	printf("%s", stack[top].oper);
-    	
-		strcat(postFix, stack[top].oper);
-		strcat(postFix, " ");
-		
-    	Pop(&top);
+    	// "(" 또는 ")"인 경우 postFix에 반영하지 않는다. 
+		if(strcmp(stack[top].oper, ")") && strcmp(stack[top].oper, "(")){
+			printf("%s", stack[top].oper);	
+			strcat(postFix, stack[top].oper);
+			strcat(postFix, " ");	
+		}
+		Pop(&top);
 	}
 	return postFix;	
 }
 
-int calculate_postfix(char *postfix){
-	
+float calculate_postfix(char *str){
+	char tmp[100];
+	int num_of_char, len, i, start_index;
+	float first_operand, second_operand, result = 0;
+	len=strlen(str);
+	element newElement;
+    for(i=0;i<len;i++)
+    {   
+    	// 공백의 경우 건너뜀 
+    	if(str[i]==32){
+    		continue;	
+		}
+    	
+		start_index = i;
+        num_of_char = 1; 
+    	//숫자인 경우	
+        if('0'<=str[i] && str[i]<='9'){
+        	// 뒤에 숫자가 더 있는 경우(2의자리 이상) 
+        	while('0'<=str[i+1] && str[i+1]<='9'){
+        		num_of_char++;
+        		i++;
+        	};
+        	// 숫자 문자열이 저장될 tmp 에 숫자 문자열을 저장 
+			strncpy(tmp, str+start_index,num_of_char);
+			// 마지막 메모리 공간에 null문자 삽입 
+			tmp[num_of_char] = '\0';
+			
+			newElement.fnum = atof(tmp);
+			
+			// 숫자인 경우에는 스택에 push 
+			Push(&top,newElement);
+			
+        }
+        //연산자인 경우  
+        else{
+        	// 연산자 자리 수가 1이상인 AND 또는 OR인 경우. 
+			while(('0'> str[i+1] || str[i+1]) > '9' && str[i+1] != ' '){
+				// 그러나 )* 와 같은 경우는 각각이 하나이므로 따로 처리.
+				// 즉 하나로 보면 안됨 
+        		if(str[i+1] == '*' || str[i+1] == '/' || str[i+1] == '+' || str[i+1] == '-' || str[i+1] == '(' || str[i+1] == ')')break;
+        		
+        		num_of_char++;
+        		i++;
+        	};
+			strncpy(tmp, str+start_index,num_of_char);
+			
+        	tmp[num_of_char] = '\0';
+        	
+        	
+        	second_operand = stack[top].fnum;
+        	Pop(&top);
+        	first_operand = stack[top].fnum;
+        	Pop(&top);
+        	
+        	if(!strcmp(tmp, "+"))result = first_operand+second_operand;
+        	else if(!strcmp(tmp, "-"))result = first_operand-second_operand;
+        	else if(!strcmp(tmp, "*"))result = first_operand*second_operand;
+        	else if(!strcmp(tmp, "/"))result = first_operand/second_operand;
+        	newElement.fnum = result;
+        	Push(&top, newElement);
+        }
+    }
+    return result;
 }
 
 #endif

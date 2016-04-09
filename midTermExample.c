@@ -17,5 +17,7 @@ int main(){
 //	printf("%d",get_precedence(&tmp));
 	printf("\n%s\n", postFix);
 	printf("%d\n", strlen(postFix));
+	
+	printf("%f\n", calculate_postfix(postFix));
 	return 0;
 }
