@@ -33,7 +33,7 @@ void evaluate(char *str){
     	//숫자인 경우	
         if('0'<=str[i] && str[i]<='9'){
         	// 뒤에 숫자가 더 있는 경우(2의자리 이상) 
-        	while('0'<=str[i+1] && str[i+1]<='9' && str[i+1] != '\0'){
+        	while('0'<=str[i+1] && str[i+1]<='9'){
         		num_of_char++;
         		i++;
         	};
@@ -43,15 +43,16 @@ void evaluate(char *str){
         	printf("숫자 인식 : %d\n", atoi(tmp));
         }
         //연산자인 경우  
-//        else{
-//        	while(('0'> str[i+1] || str[i+1] > '9') && str[i+1] != '\0'){
-//        		num_of_char++;
-//        	};
-//			printf("%d자리 연산자\n", num_of_char);
-//        	strncpy(tmp, str+start_index,num_of_char);
-//        	tmp[num_of_char] = '\0';
-//        	printf("연산자 인식 : %s\n", tmp);
-//		}
+        else{
+        	while('0'> str[i+1] || str[i+1] > '9'){
+        		num_of_char++;
+        		i++;
+        	};
+			printf("%d자리 연산자\n", num_of_char);
+        	strncpy(tmp, str+start_index,num_of_char);
+        	tmp[num_of_char] = '\0';
+        	printf("연산자 인식 : %s\n", tmp);
+		}
 	}
     
 }
