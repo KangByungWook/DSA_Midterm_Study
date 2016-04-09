@@ -15,6 +15,7 @@ int main(){
 	prefix_to_postfix(str);
 //	char tmp = '+';
 //	printf("%d",get_precedence(&tmp));
-	printf("\n%s", postFix);
-    return 0;
+	printf("\n%s\n", postFix);
+	printf("%d\n", strlen(postFix));
+	return 0;
 }

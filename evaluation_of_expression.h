@@ -9,7 +9,7 @@
 //postFix : prefix에서 변환된 postfix 문자열이 저장되는 주소 
 char postFix[100];
 int postFixBuffIndex = 0;
-
+    
 
 int get_precedence(char *oper){
 	if(!strcmp(oper, "AND") || !strcmp(oper, "OR"))return 1;
@@ -21,7 +21,7 @@ int get_precedence(char *oper){
 
 char* prefix_to_postfix(char *str){
 	char tmp[100];
-    int num_of_char, len, i, start_index;
+	int num_of_char, len, i, start_index;
 	len=strlen(str);
 	element newElement;
     for(i=0;i<len;i++)
@@ -35,17 +35,24 @@ char* prefix_to_postfix(char *str){
         		num_of_char++;
         		i++;
         	};
+        	// 숫자 문자열이 저장될 tmp 에 숫자 문자열을 저장 
 			strncpy(tmp, str+start_index,num_of_char);
-			strncpy(postFix+postFixBuffIndex, tmp, num_of_char);
-			strncpy(postFix+postFixBuffIndex+1, " ", 1);
-			postFixBuffIndex+=num_of_char+1;
-        	tmp[num_of_char] = '\0';
-        	
-        	printf("%d", atoi(tmp));
+			// 마지막 메모리 공간에 null문자 삽입 
+			tmp[num_of_char] = '\0';
+			
+			strcat(postFix, tmp);
+			strcat(postFix, " ");
+			
+			printf("%d", atoi(tmp));
         }
         //연산자인 경우  
         else{
-        	while('0'> str[i+1] || str[i+1] > '9'){
+        	// 연산자 자리 수가 1이상인 AND 또는 OR인 경우. 
+			while('0'> str[i+1] || str[i+1] > '9'){
+				// 그러나 )* 와 같은 경우는 각각이 하나이므로 따로 처리.
+				// 즉 하나로 보면 안됨 
+        		if(str[i+1] == '*' || str[i+1] == '/' || str[i+1] == '+' || str[i+1] == '-' || str[i+1] == '(' || str[i+1] == ')')break;
+        		
         		num_of_char++;
         		i++;
         	};
@@ -53,11 +60,12 @@ char* prefix_to_postfix(char *str){
 			
         	tmp[num_of_char] = '\0';
         	while(!isEmpty(stack) && stack[top].precedence >= get_precedence(tmp)){
-        		strncpy(postFix+postFixBuffIndex, stack[top].oper, strlen(stack[top].oper));
-        		// 공백 넣어주기 
-        		strncpy(postFix+postFixBuffIndex+1, " ", 1);
-				postFixBuffIndex+=strlen(stack[top].oper)+1;
+        		
         		printf("%s", stack[top].oper);
+        		
+        		strcat(postFix, stack[top].oper);
+				strcat(postFix, " ");
+				
         		Pop(&top);
 			}
 			strcpy(newElement.oper,tmp);
@@ -66,14 +74,15 @@ char* prefix_to_postfix(char *str){
         	}
 	}
     while(!isEmpty(stack)){
-    	strncpy(postFix+postFixBuffIndex, stack[top].oper, strlen(stack[top].oper));
-    	// 공백 넣어주기 
-    	strncpy(postFix+postFixBuffIndex+1, " ", 1);
-		postFixBuffIndex+=strlen(stack[top].oper) + 1;
     	printf("%s", stack[top].oper);
+    	
+		strcat(postFix, stack[top].oper);
+		strcat(postFix, " ");
+		
     	Pop(&top);
 	}
 	return postFix;	
 }
+
 
 #endif
