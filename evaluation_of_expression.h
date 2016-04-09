@@ -3,29 +3,22 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "stack.h"
 
-#define PLUS_PRECEDENCE 1
-
-int get_precedence(char oper){
-	switch(oper){
-		case '+':
-			return 1;
-		case '-':
-			return 1;
-		case '*':
-			return 2;
-		case '/':
-			return 2;
-		default:
-			printf("유효하지 않은 연산자입니다\n");
-			return -1;
-	}
+int get_precedence(char *oper){
+	if(!strcmp(oper, "AND") || !strcmp(oper, "OR"))return 1;
+	else if(*oper == '+' || *oper == '-') return 2;
+	else if(*oper == '*' || *oper == '/') return 3;
+	else if(*oper == '(' || *oper == ')') return 4;
+	else return -1;
 }
 
 void evaluate(char *str){
 	char tmp[100];
     int num_of_char, len, i, start_index;
 	len=strlen(str);
+	element newElement;
     for(i=0;i<len;i++)
     {   
 		start_index = i;
@@ -37,10 +30,9 @@ void evaluate(char *str){
         		num_of_char++;
         		i++;
         	};
-			printf("%d자리 숫자\n", num_of_char);
-        	strncpy(tmp, str+start_index,num_of_char);
+			strncpy(tmp, str+start_index,num_of_char);
         	tmp[num_of_char] = '\0';
-        	printf("숫자 인식 : %d\n", atoi(tmp));
+        	printf("%d ", atoi(tmp));
         }
         //연산자인 경우  
         else{
@@ -48,13 +40,21 @@ void evaluate(char *str){
         		num_of_char++;
         		i++;
         	};
-			printf("%d자리 연산자\n", num_of_char);
-        	strncpy(tmp, str+start_index,num_of_char);
+			strncpy(tmp, str+start_index,num_of_char);
         	tmp[num_of_char] = '\0';
-        	printf("연산자 인식 : %s\n", tmp);
-		}
+        	while(!isEmpty(stack) && stack[top].precedence >= get_precedence(tmp)){
+        		printf("%s ", stack[top].oper);
+        		Pop(&top);
+			}
+			strcpy(newElement.oper,tmp);
+			newElement.precedence = get_precedence(tmp);
+			Push(&top, newElement);
+        	}
 	}
-    
+    while(!isEmpty(stack)){
+    	printf("%s ", stack[top].oper);
+        Pop(&top);
+	}
 }
 
 #endif
