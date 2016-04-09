@@ -55,6 +55,7 @@ void evaluate(char *str){
     	printf("%s ", stack[top].oper);
         Pop(&top);
 	}
+	
 }
 
 #endif
